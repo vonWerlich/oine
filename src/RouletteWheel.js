@@ -14,8 +14,12 @@ const RouletteWheel = () => {
   const blackNumbers = numbers.filter(n => !redNumbers.includes(n) && n !== 0);
 
   const placeBet = () => {
+    if (betDetails === null) {
+      alert('Escolha uma opção válida')
+      return;
+    }
     if (betAmount > 0 && betAmount <= balance) {
-      setBalance(balance - betAmount);
+      setBalance((prevBalance) => prevBalance - betAmount);
       spinWheel();
     } else {
       alert('Invalid bet. Make sure to enter a valid bet amount.');
@@ -23,8 +27,10 @@ const RouletteWheel = () => {
   };
 
   const spinWheel = () => {
+    
     setIsSpinning(true);
     const randomIndex = Math.floor(Math.random() * numbers.length);
+    
     setTimeout(() => {
       const winningNumber = numbers[randomIndex];
       setSelectedNumber(winningNumber);
@@ -32,6 +38,7 @@ const RouletteWheel = () => {
 
       setTimeout(() => {
         let winnings = 0;
+      
         if (betOption === 'number' && betDetails === winningNumber) {
           winnings = betAmount * 35; // Standard payout for a single number
         } else if (betOption === 'redBlack') {
@@ -63,7 +70,7 @@ const RouletteWheel = () => {
         }
 
         if (winnings > 0) {
-          setBalance(balance + winnings);
+          setBalance((prevBalance) => prevBalance + winnings);
           alert(`Congratulations! You won ${winnings}!`);
         } else {
           alert('You lost this round. Better luck next time!');
@@ -102,24 +109,29 @@ const RouletteWheel = () => {
           <select onChange={(e) => setBetDetails(e.target.value)} disabled={isSpinning}>
             {betOption === 'redBlack' && (
               <>
+                <option value="">Choose an option</option>
                 <option value="red">Red</option>
                 <option value="black">Black</option>
               </>
             )}
             {betOption === 'evenOdd' && (
               <>
+
+                <option value="">Choose an option</option>
                 <option value="even">Even</option>
                 <option value="odd">Odd</option>
               </>
             )}
             {betOption === 'lowHigh' && (
               <>
+                <option value="">Choose an option</option>
                 <option value="low">1-18</option>
                 <option value="high">19-36</option>
               </>
             )}
             {betOption === 'dozen' && (
               <>
+                <option value="">Choose an option</option>
                 <option value="dozen1">1-12</option>
                 <option value="dozen2">13-24</option>
                 <option value="dozen3">25-36</option>
