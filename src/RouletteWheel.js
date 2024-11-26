@@ -1,5 +1,29 @@
 import React, { useState } from 'react';
 import './RouletteWheel.css';
+import { Line } from 'react-chartjs-2'; // Import the chart type
+
+// Import required Chart.js modules
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+
+// Register Chart.js modules
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 const RouletteWheel = () => {
   const [selectedNumber, setSelectedNumber] = useState(null);
@@ -8,10 +32,14 @@ const RouletteWheel = () => {
   const [betAmount, setBetAmount] = useState(0);
   const [betOption, setBetOption] = useState('number'); // Default bet option
   const [betDetails, setBetDetails] = useState(null);
+  const [balanceHistory, setBalanceHistory] = useState([1000]);
+  const [betCount, setBetCount] = useState(0);
 
   const numbers = Array.from({ length: 37 }, (_, i) => i); // Numbers 0-36
   const redNumbers = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36];
   const blackNumbers = numbers.filter(n => !redNumbers.includes(n) && n !== 0);
+
+  
 
   const placeBet = () => {
     if (betDetails === null) {
@@ -20,6 +48,9 @@ const RouletteWheel = () => {
     }
     if (betAmount > 0 && betAmount <= balance) {
       setBalance((prevBalance) => prevBalance - betAmount);
+      setBalanceHistory((prevHistory) => [...prevHistory, balance]);
+      setBetCount((count) => count + 1);
+      //funcionando entre aspas
       spinWheel();
     } else {
       alert('Invalid bet. Make sure to enter a valid bet amount.');
@@ -77,6 +108,38 @@ const RouletteWheel = () => {
         }
       }, 1000); // Delay before showing the result
     }, 3000); // Simulate a 3-second spin
+  };
+
+  const ChartComponent = () => {
+    // Data to display on the chart
+    const data = {
+      labels: ['January', 'February', 'March', 'April', 'May'], // X-axis labels
+      datasets: [
+        {
+          label: 'My Dataset', // Legend label
+          data: [10, 20, 30, 40, 50], // Y-axis values
+          borderColor: 'rgba(75, 192, 192, 1)', // Line color
+          backgroundColor: 'rgba(75, 192, 192, 0.2)', // Fill color under the line
+          borderWidth: 2, // Line thickness
+        },
+      ],
+    };
+  
+    // Chart options for customization
+    const options = {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: 'top', // Position of the legend
+        },
+        title: {
+          display: true,
+          text: 'Line Chart Example', // Title of the chart
+        },
+      },
+    };
+  
+    return <Line data={data} options={options} />;
   };
 
   return (
@@ -157,6 +220,9 @@ const RouletteWheel = () => {
           The winning number is: <strong>{selectedNumber}</strong>
         </div>
       )}
+      <div>
+        <ChartComponent />
+      </div>
     </div>
   );
 };
