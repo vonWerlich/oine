@@ -33,13 +33,14 @@ const RouletteWheel = () => {
   const [betOption, setBetOption] = useState('number'); // Default bet option
   const [betDetails, setBetDetails] = useState(null);
   const [balanceHistory, setBalanceHistory] = useState([1000]);
-  const [betCount, setBetCount] = useState(0);
+  const [betCount, setBetCount] = useState(1);
 
   const numbers = Array.from({ length: 37 }, (_, i) => i); // Numbers 0-36
   const redNumbers = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36];
   const blackNumbers = numbers.filter(n => !redNumbers.includes(n) && n !== 0);
 
-  
+  let currentBalanceHistory = balanceHistory;
+  let newBalance = balance;
 
   const placeBet = () => {
     if (betDetails === null) {
@@ -47,11 +48,14 @@ const RouletteWheel = () => {
       return;
     }
     if (betAmount > 0 && betAmount <= balance) {
+      newBalance = balance - betAmount;
       setBalance((prevBalance) => prevBalance - betAmount);
-      setBalanceHistory((prevHistory) => [...prevHistory, balance]);
       setBetCount((count) => count + 1);
       //funcionando entre aspas
+
+      console.log(balanceHistory)
       spinWheel();
+      
     } else {
       alert('Invalid bet. Make sure to enter a valid bet amount.');
     }
@@ -101,23 +105,29 @@ const RouletteWheel = () => {
         }
 
         if (winnings > 0) {
+          newBalance = newBalance + winnings;
           setBalance((prevBalance) => prevBalance + winnings);
+          currentBalanceHistory = [...currentBalanceHistory, newBalance]
+          setBalanceHistory((prevHistory) => [...prevHistory, newBalance]);
           alert(`Congratulations! You won ${winnings}!`);
         } else {
+          currentBalanceHistory = [...currentBalanceHistory, newBalance]
+          setBalanceHistory((prevHistory) => [...prevHistory, newBalance]);
           alert('You lost this round. Better luck next time!');
         }
-      }, 1000); // Delay before showing the result
-    }, 3000); // Simulate a 3-second spin
+      }, 700); // Delay before showing the result
+    }, 2000); // Simulate a 3-second spin
   };
 
   const ChartComponent = () => {
     // Data to display on the chart
     const data = {
-      labels: ['January', 'February', 'March', 'April', 'May'], // X-axis labels
+      // labels: ['January', 'February', 'March', 'April', 'May'], // X-axis labels
+      labels: Array.from(Array(betCount).keys()),
       datasets: [
         {
           label: 'My Dataset', // Legend label
-          data: [10, 20, 30, 40, 50], // Y-axis values
+          data: balanceHistory, // Y-axis values
           borderColor: 'rgba(75, 192, 192, 1)', // Line color
           backgroundColor: 'rgba(75, 192, 192, 0.2)', // Fill color under the line
           borderWidth: 2, // Line thickness
