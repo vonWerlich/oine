@@ -4,7 +4,7 @@ import RouletteWheel from './RouletteWheel';
 function App() {
   return (
     <div className="App">
-      <h1>Roulette Game</h1>
+      <h1>A Casa Sempre Ganha</h1>
       <RouletteWheel />
     </div>
   );
