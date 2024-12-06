@@ -83,7 +83,7 @@ const RouletteWheel = () => {
   let newBalance = balance;
 
   const placeBet = () => {
-    if (betDetails === null) {
+    if (betDetails === null || betDetails === "") {
       alert('Escolha uma opção válida')
       return;
     }
@@ -154,9 +154,12 @@ const RouletteWheel = () => {
           currentBalanceHistory = [...currentBalanceHistory, newBalance]
           setBalanceHistory((prevHistory) => [...prevHistory, newBalance]);
           alert('You lost this round. Better luck next time!');
+          if (newBalance === 0) {
+            alert('You lost everything!')
+          }
         }
       }, 700); // Delay before showing the result
-    }, 2000); // Simulate a 3-second spin
+    }, 1500); // Simulate a 2-second spin
   };
 
   const ChartComponent = () => {
@@ -194,33 +197,12 @@ const RouletteWheel = () => {
 
   return (
     <div className="roulette-container">
-      <div className="main-content">
-        <div className={`wheel ${isSpinning ? 'spinning' : ''}`}>
-          {numbers2.map((item, index) => (
-            <div
-              key={item.number}
-              className="wheel-segment"
-              style={{
-                transform: `rotate(${(360 / numbers2.length) * index}deg)`,
-                backgroundColor: item.color, // Usando a cor de cada número do array
-              }}
-            >
-              <span
-                className="wheel-number"
-                style={{
-                  transform: `rotate(-${(360 / numbers2.length) * index}deg)`,
-                }}
-              >
-                {item.number} {/* Exibe o número associado ao segmento */}
-              </span>
-            </div>
-          ))}
-        </div>
-        <div className="indicator"></div>
+      <div className="betting-panel-container">
+
         <div className="betting-panel">
           <h2>Place Your Bet</h2>
           <select onChange={(e) => setBetOption(e.target.value)} disabled={isSpinning}>
-            <option value="number">Single Number (36:1)</option>
+            <option value="number">Single Number (35:1)</option>
             <option value="redBlack">Red/Black (1:1)</option>
             <option value="evenOdd">Even/Odd (1:1)</option>
             <option value="lowHigh">1-18 / 19-36 (1:1)</option>
@@ -280,6 +262,7 @@ const RouletteWheel = () => {
             {isSpinning ? 'Spinning...' : 'Place Bet & Spin'}
           </button>
         </div>
+
         <div className="balance-info">
           <h3>Balance: ${balance}</h3>
         </div>
@@ -288,6 +271,33 @@ const RouletteWheel = () => {
             The winning number is: <strong>{selectedNumber}</strong>
           </div>
         )}
+      </div>
+
+      <div className="main-content">
+        <div className={`wheel ${isSpinning ? 'spinning' : ''}`}>
+          {numbers2.map((item, index) => (
+            <div
+              key={item.number}
+              className="wheel-segment"
+              style={{
+                transform: `rotate(${(360 / numbers2.length) * index}deg)`,
+                backgroundColor: item.color, // Usando a cor de cada número do array
+              }}
+            >
+              <span
+                className="wheel-number"
+                style={{
+                  transform: `rotate(-${(360 / numbers2.length) * index}deg)`,
+                }}
+              >
+                {item.number} {/* Exibe o número associado ao segmento */}
+              </span>
+            </div>
+          ))}
+        </div>
+        <div className="indicator"></div>
+        
+
       </div>
      
       <div className="chart-container">
